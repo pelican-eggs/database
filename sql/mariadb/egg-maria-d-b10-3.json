@@ -1,12 +1,13 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2023-12-19T09:54:17+01:00",
+    "exported_at": "2024-06-02T14:34:29+00:00",
     "name": "MariaDB 10.3",
     "author": "parker@parkervcp.com",
+    "uuid": "4b4efa4c-1739-42f9-91d5-c99d618a6d89",
     "description": "One of the most popular database servers. Made by the original developers of MySQL. Guaranteed to stay open source.",
     "features": null,
     "docker_images": {
