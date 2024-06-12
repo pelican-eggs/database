@@ -1,10 +1,10 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2023-12-12T15:33:25+01:00",
+    "exported_at": "2024-06-12T19:54:48+00:00",
     "name": "Postgres 16",
     "author": "parker@parkervcp.com",
     "description": "A default Postgres install that is not really editable.",
@@ -32,7 +32,7 @@
             "name": "Superuser Name",
             "description": "The username for the postgres superuser",
             "env_variable": "PGUSER",
-            "default_value": "pterodactyl",
+            "default_value": "pelican",
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|string|max:20",
