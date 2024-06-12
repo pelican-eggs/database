@@ -7,6 +7,7 @@
     "exported_at": "2024-06-12T19:54:48+00:00",
     "name": "Postgres 16",
     "author": "parker@parkervcp.com",
+    "uuid": "3490d65d-66df-431e-8455-99a649f89c0e",
     "description": "A default Postgres install that is not really editable.",
     "features": null,
     "docker_images": {
