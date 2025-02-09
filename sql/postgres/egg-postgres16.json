@@ -1,12 +1,13 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2023-12-12T15:33:25+01:00",
+    "exported_at": "2024-06-02T14:34:27+00:00",
     "name": "Postgres 16",
     "author": "parker@parkervcp.com",
+    "uuid": "3490d65d-66df-431e-8455-99a649f89c0e",
     "description": "A default Postgres install that is not really editable.",
     "features": null,
     "docker_images": {
@@ -36,6 +37,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|string|max:20",
+            "sort": null,
             "field_type": "text"
         },
         {
@@ -46,6 +48,7 @@
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|string|max:20",
+            "sort": null,
             "field_type": "text"
         }
     ]
