@@ -1,10 +1,10 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v1",
         "update_url": null
     },
-    "exported_at": "2024-06-02T14:34:28+00:00",
+    "exported_at": "2025-02-09T15:43:06+00:00",
     "name": "Redis-6",
     "author": "parker@parkervcp.com",
     "uuid": "f6693b4c-9ea0-4f76-959d-ea180a20ae92",
@@ -36,9 +36,11 @@
             "default_value": "P@55w0rd",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|string",
-            "sort": null,
-            "field_type": "text"
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": null
         }
     ]
 }
