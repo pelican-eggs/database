@@ -1,0 +1,83 @@
+# MariaDB install database server configuration file.
+!include /etc/mysql/mariadb.cnf
+!includedir /etc/mysql/conf.d/
+
+[client]
+port		= 3306
+socket		= /mnt/server/run/mysqld/mysqld.sock
+
+[mysqld]
+pid-file	= /mnt/server/run/mariadbd/mariadbd.pid
+socket		= /mnt/server/run/mariadbd/mariadbd.sock
+port		= 3306
+basedir		= /usr
+datadir		= /mnt/server/mariadb
+tmpdir		= /tmp
+lc_messages_dir	= /usr/share/mysql
+lc_messages	= en_US
+skip-external-locking
+
+#
+# * InnoDB
+#
+# InnoDB is enabled by default with a 10MB datafile in /var/lib/mariadb/.
+# Read the manual for more InnoDB related options. There are many!
+default_storage_engine	= InnoDB
+innodb_buffer_pool_size	= 256M
+innodb_log_buffer_size	= 8M
+innodb_file_per_table	= 1
+innodb_open_files	    = 400
+innodb_io_capacity	    = 400
+innodb_flush_method	    = O_DIRECT
+
+#
+# * Fine Tuning
+#
+max_connections		    = 100
+connect_timeout		    = 5
+wait_timeout		    = 600
+max_allowed_packet	    = 16M
+thread_cache_size       = 128
+sort_buffer_size	    = 4M
+bulk_insert_buffer_size	= 16M
+tmp_table_size		    = 32M
+max_heap_table_size	    = 32M
+
+#
+# * MyISAM
+#
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched. On error, make copy and try a repair.
+myisam_recover_options  = BACKUP
+key_buffer_size		    = 128M
+table_open_cache	    = 400
+myisam_sort_buffer_size	= 512M
+concurrent_insert       = 2
+read_buffer_size        = 2M
+read_rnd_buffer_size    = 1M
+
+#
+# * Query Cache Configuration
+#
+# Cache only tiny result sets, so we can fit more in the query cache.
+query_cache_limit       = 128K
+query_cache_size        = 64M
+# Enable logging by default to help find problems
+general_log_file        = /mnt/server/log/mariadb/mariadb.log
+
+slow_query_log_file	    = /mnt/server/log/mariadb/mariadb-slow.log
+long_query_time         = 10
+
+expire_logs_days	    = 10
+max_binlog_size         = 100M 
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet	    = 16M
+
+[mysql]
+#no-auto-rehash	# faster start of mariadb but no tab completion
+
+[isamchk]
+key_buffer		        = 16M
