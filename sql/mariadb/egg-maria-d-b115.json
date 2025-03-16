@@ -1,0 +1,32 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
+    "meta": {
+        "version": "PLCN_v1",
+        "update_url": null
+    },
+    "exported_at": "2025-02-25T20:28:39+00:00",
+    "name": "MariaDB 11.5",
+    "author": "parker@parkervcp.com",
+    "uuid": "b376eda5-e338-4507-b4f4-e11f949d4214",
+    "description": "One of the most popular database servers. Made by the original developers of MySQL. Guaranteed to stay open source.",
+    "features": [],
+    "docker_images": {
+        "MariaDB 11.5": "ghcr.io\/parkervcp\/yolks:mariadb_11.5"
+    },
+    "file_denylist": [],
+    "startup": "{ \/usr\/sbin\/mariadbd --defaults-file=\/home\/container\/.my.cnf & } && sleep 5 && mariadb -u container",
+    "config": {
+        "files": "{\n    \".my.cnf\": {\n        \"parser\": \"file\",\n        \"find\": {\n            \"port\": \"port = {{server.allocations.default.port}}\",\n            \"bind-address\": \"bind-address=0.0.0.0\"\n        }\n    }\n}",
+        "startup": "{\n    \"done\": \"ready for connections.\"\n}",
+        "logs": "{}",
+        "stop": "shutdown; exit;"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\n# MariaDB Installation Script\n#\n# Server Files: \/mnt\/server\nset -x\n\necho -e \"installing dependencies\"\napt-get -y update\napt-get -y install curl\n\n## add user\necho -e \"adding container user\"\nuseradd -d \/home\/container -m container -s \/bin\/bash\n\n## own server to container user\nchown container: \/mnt\/server\/\n\n## mkdir and install db\necho -e \"installing mariadb database\"\nrunuser -l container -c 'mkdir -p \/mnt\/server\/run\/mariadbd'\nrunuser -l container -c 'mkdir -p \/mnt\/server\/log\/mariadb'\nrunuser -l container -c 'mkdir \/mnt\/server\/mariadb'\n\n## get install config\nrunuser -l container -c 'curl https:\/\/raw.githubusercontent.com\/pelican-eggs\/database\/refs\/heads\/main\/sql\/mariadb\/install.maria.cnf > \/mnt\/server\/install.maria.cnf'\n\n# install with install config\nrunuser -l container -c 'mariadb-install-db --defaults-file=\/mnt\/server\/install.maria.cnf'\n\n## remove install config\nrm \/mnt\/server\/install.maria.cnf\n\nif [ ! -f \/mnt\/server\/.my.cnf ]; then\n    curl https:\/\/raw.githubusercontent.com\/pelican-eggs\/database\/refs\/heads\/main\/sql\/mariadb\/.maria.cnf > \/mnt\/server\/.my.cnf\nfi\n\necho -e \"install complete\"\n\nexit",
+            "container": "mariadb:11.5",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": []
+}
