@@ -10,7 +10,7 @@ To disable the message about free monitoring you can run `db.disableFreeMonitori
 
 ## Security
 
-By default, MongoDB **does not enforce access control**, meaning that even if you set an admin username and password in the settings of your Pterodactyl server, **anyone will be able to connect to the database without authentication**, and perform any operation.
+By default, MongoDB **does not enforce access control**, meaning that even if you set an admin username and password in the settings of your server, **anyone will be able to connect to the database without authentication**, and perform any operation.
 
 > :warning: This is why we recommend to expose your MongoDB database only to your local network, if possible
 
