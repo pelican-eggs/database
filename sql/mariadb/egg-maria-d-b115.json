@@ -16,7 +16,7 @@
     "file_denylist": [],
     "startup": "{ \/usr\/sbin\/mariadbd --defaults-file=\/home\/container\/.my.cnf & } && sleep 5 && mariadb -u container",
     "config": {
-        "files": "{\n    \".my.cnf\": {\n        \"parser\": \"file\",\n        \"find\": {\n            \"port\": \"port = {{server.allocations.default.port}}\",\n            \"bind-address\": \"bind-address=0.0.0.0\"\n        }\n    }\n}",
+        "files": "{\n    \".my.cnf\": {\n        \"parser\": \"file\",\n        \"find\": {\n            \"port\": \"port = {{server.allocations.default.port}}\",\n            \"bind-address\": \"bind-address=::0\"\n        }\n    }\n}",
         "startup": "{\n    \"done\": \"ready for connections.\"\n}",
         "logs": "{}",
         "stop": "shutdown; exit;"

@@ -16,7 +16,7 @@
     "file_denylist": [],
     "startup": "{ \/usr\/sbin\/mysqld & } && sleep 5 && mysql -u root",
     "config": {
-        "files": "{\r\n    \".my.cnf\": {\r\n        \"parser\": \"file\",\r\n        \"find\": {\r\n            \"port\": \"port = {{server.build.default.port}}\",\r\n            \"bind-address\": \"bind-address=0.0.0.0\"\r\n        }\r\n    }\r\n}",
+        "files": "{\r\n    \".my.cnf\": {\r\n        \"parser\": \"file\",\r\n        \"find\": {\r\n            \"port\": \"port = {{server.build.default.port}}\",\r\n            \"bind-address\": \"bind-address=::0\"\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \"mysqld: ready for connections\"\r\n}",
         "logs": "{}",
         "stop": "shutdown; exit;"
