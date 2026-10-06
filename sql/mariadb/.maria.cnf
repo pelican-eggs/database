@@ -10,7 +10,7 @@ socket		        = /home/container/run/mariadbd/mariadbd.sock
 [mysqld]
 pid-file	        = /home/container/run/mariadbd/mariadbd.pid
 socket		        = /home/container/run/mariadbd/mariadbd.sock
-bind-address        = 0.0.0.0
+bind-address        = ::0
 port		        = 3306
 datadir             = /home/container/mariadb
 language            = /usr/local/share/mysql/english
