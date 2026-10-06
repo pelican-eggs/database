@@ -33,7 +33,7 @@
             "name": "Superuser Name",
             "description": "The username for the postgres superuser",
             "env_variable": "PGUSER",
-            "default_value": "pterodactyl",
+            "default_value": "pelican",
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|string|max:20",
