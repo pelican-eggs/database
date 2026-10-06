@@ -1,0 +1,75 @@
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
+meta:
+  version: PLCN_v3
+  update_url: 'https://raw.githubusercontent.com/pelican-eggs/database/refs/heads/main/nosql/mongodb/egg-mongo-d-b6.yaml'
+exported_at: '2026-01-02T21:04:04+00:00'
+name: 'MongoDB 6'
+author: parker@parkervcp.com
+uuid: e977e061-8320-4649-9910-6d3056950ef3
+description: |-
+  MongoDB is a general purpose, document-based, distributed database built for modern application
+  developers.
+image: 'data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI1MDAiIHZpZXdCb3g9IjguNzM4IC01LjAzNjIyODM0IDE3LjQ1OTkyNDIyIDM5LjQwNjE5NDg0IiB3aWR0aD0iMjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTUuOS4wODcuODU0IDEuNjA0Yy4xOTIuMjk2LjQuNTU4LjY0NS44MDJhMjIuNDA2IDIyLjQwNiAwIDAgMSAyLjAwNCAyLjI2NmMxLjQ0NyAxLjkgMi40MjMgNC4wMSAzLjEyIDYuMjkyLjQxOCAxLjM5NC42NDUgMi44MjQuNjYyIDQuMjcuMDcgNC4zMjMtMS40MTIgOC4wMzUtNC40IDExLjEyYTEyLjcgMTIuNyAwIDAgMSAtMS41NyAxLjM0MmMtLjI5NiAwLS40MzYtLjIyNy0uNTU4LS40MzZhMy41ODkgMy41ODkgMCAwIDEgLS40MzYtMS4yNTVjLS4xMDUtLjUyMy0uMTc0LTEuMDQ2LS4xNC0xLjU4NnYtLjI0NGMtLjAyNC0uMDUyLS4yODUtMjQuMDUyLS4xODEtMjQuMTc1eiIgZmlsbD0iIzU5OTYzNiIvPjxwYXRoIGQ9Im0xNS45LjAzNGMtLjAzNS0uMDctLjA3LS4wMTctLjEwNS4wMTcuMDE3LjM1LS4xMDUuNjYyLS4yOTYuOTYtLjIxLjI5Ni0uNDg4LjUyMy0uNzY3Ljc2Ny0xLjU1IDEuMzQyLTIuNzcgMi45NjMtMy43NDcgNC43NzYtMS4zIDIuNDQtMS45NyA1LjA1NS0yLjE2IDcuODA4LS4wODcuOTkzLjMxNCA0LjQ5Ny42MjcgNS41MDguODU0IDIuNjg0IDIuMzg4IDQuOTMzIDQuMzc1IDYuODg1LjQ4OC40NyAxLjAxLjkwNiAxLjU1IDEuMzI1LjE1NyAwIC4xNzQtLjE0LjIxLS4yNDRhNC43OCA0Ljc4IDAgMCAwIC4xNTctLjY4bC4zNS0yLjYxNHoiIGZpbGw9IiM2Y2FjNDgiLz48cGF0aCBkPSJtMTYuNzU0IDI4Ljg0NWMuMDM1LS40LjIyNy0uNzMyLjQzNi0xLjA2My0uMjEtLjA4Ny0uMzY2LS4yNi0uNDg4LS40NTNhMy4yMzUgMy4yMzUgMCAwIDEgLS4yNi0uNTc1Yy0uMjQ0LS43MzItLjI5Ni0xLjUtLjM2Ni0yLjI0OHYtLjQ1M2MtLjA4Ny4wNy0uMTA1LjY2Mi0uMTA1Ljc1YTE3LjM3IDE3LjM3IDAgMCAxIC0uMzE0IDIuMzUzYy0uMDUyLjMxNC0uMDg3LjYyNy0uMjguOTA2IDAgLjAzNSAwIC4wNy4wMTcuMTIyLjMxNC45MjQuNCAxLjg2NS40NTMgMi44MjR2LjM1YzAgLjQxOC0uMDE3LjMzLjMzLjQ3LjE0LjA1Mi4yOTYuMDcuNDM2LjE3NC4xMDUgMCAuMTIyLS4wODcuMTIyLS4xNTdsLS4wNTItLjU3NXYtMS42MDRjLS4wMTctLjI4LjAzNS0uNTU4LjA3LS44MnoiIGZpbGw9IiNjMmJmYmYiLz48L3N2Zz4='
+tags: {  }
+features: {  }
+docker_images:
+  MongoDB_6: 'ghcr.io/pelican-eggs/yolks:mongodb_6'
+file_denylist: {  }
+startup_commands:
+  Default: "mongod --fork --dbpath /home/container/mongodb/ --port ${SERVER_PORT} --bind_ip 0.0.0.0 --logpath /home/container/logs/mongo.log -f /home/container/mongod.conf; until nc -z -v -w5 127.0.0.1 ${SERVER_PORT}; do echo 'Waiting for mongodb connection...'; sleep 5; done; mongosh --username ${MONGO_USER} --password ${MONGO_USER_PASS} --host 127.0.0.1:${SERVER_PORT} && mongosh --eval \"db.getSiblingDB('admin').shutdownServer()\" 127.0.0.1:${SERVER_PORT}"
+config:
+  files:
+    mongod.conf:
+      parser: file
+      find:
+        '#security:': |-
+          security: 
+            authorization: "enabled"
+  startup:
+    done: 'child process started successfully'
+  logs: {  }
+  stop: exit
+scripts:
+  installation:
+    script: |-
+      #!/bin/bash 
+      if [ ! -d /mnt/server/ ]; then
+          mkdir /mnt/server/
+      fi
+
+      cd /mnt/server/
+
+      cp /etc/mongod.conf.orig /mnt/server/mongod.conf
+
+      mkdir mongodb logs
+
+      mongod --port 27017 --dbpath /mnt/server/mongodb/ --logpath /mnt/server/logs/mongo.log --fork
+
+      mongosh --eval "db.getSiblingDB('admin').createUser({user: '${MONGO_USER}', pwd: '${MONGO_USER_PASS}', roles: ['root']})"
+
+      mongosh --eval "db.getSiblingDB('admin').shutdownServer()"
+    container: 'mongo:6-focal'
+    entrypoint: bash
+variables:
+  -
+    sort: 1
+    name: 'Mongo Admin Username'
+    description: 'The MongoDB Admin user'
+    env_variable: MONGO_USER
+    default_value: admin
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - string
+  -
+    sort: 2
+    name: 'Mongo Admin Password'
+    description: ''
+    env_variable: MONGO_USER_PASS
+    default_value: ''
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - string

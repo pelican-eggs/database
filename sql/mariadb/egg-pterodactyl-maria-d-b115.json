@@ -1,17 +1,16 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
     "meta": {
-        "version": "PLCN_v1",
+        "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2025-02-25T20:28:39+00:00",
+    "exported_at": "2026-01-02T21:09:02+00:00",
     "name": "MariaDB 11.5",
     "author": "parker@parkervcp.com",
-    "uuid": "b376eda5-e338-4507-b4f4-e11f949d4214",
     "description": "One of the most popular database servers. Made by the original developers of MySQL. Guaranteed to stay open source.",
-    "features": [],
+    "features": null,
     "docker_images": {
-        "MariaDB 11.5": "ghcr.io\/parkervcp\/yolks:mariadb_11.5"
+        "MariaDB 11.5": "ghcr.io\/pelican-eggs\/yolks:mariadb_11.5"
     },
     "file_denylist": [],
     "startup": "{ \/usr\/sbin\/mariadbd --defaults-file=\/home\/container\/.my.cnf & } && sleep 5 && mariadb -u container",

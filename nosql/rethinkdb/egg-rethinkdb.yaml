@@ -1,0 +1,86 @@
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
+meta:
+  version: PLCN_v3
+  update_url: 'https://raw.githubusercontent.com/pelican-eggs/database/refs/heads/main/nosql/rethinkdb/egg-rethinkdb.yaml'
+exported_at: '2026-01-02T21:04:43+00:00'
+name: Rethinkdb
+author: josdekurk@gmail.com
+uuid: 867a5c42-a031-4c3b-9d6e-fa9244882817
+description: 'The open-source database for the realtime web'
+image: 'data:image/png;base64,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'
+tags: {  }
+features: {  }
+docker_images:
+  Debian: 'ghcr.io/pelican-eggs/yolks:debian'
+file_denylist: {  }
+startup_commands:
+  Default: './rethinkdb --bind 0.0.0.0 --cluster-port {{SERVER_PORT}} --driver-port {{DRIVER_PORT}} --http-port {{HTTP_PORT}} --initial-password auto --no-http-admin'
+config:
+  files: {  }
+  startup:
+    done: 'Server ready'
+  logs: {  }
+  stop: ^C
+scripts:
+  installation:
+    script: |-
+      #!/bin/bash
+
+      apt update
+      apt install -y binutils xz-utils
+
+      ARCH=$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")
+
+      mkdir -p /mnt/server
+
+      cd /tmp
+      wget https://download.rethinkdb.com/repository/debian-bookworm/pool/r/rethinkdb/rethinkdb_${VERSION}~0bookworm_${ARCH}.deb -O rethinkdb.deb
+
+      ar xv rethinkdb.deb
+
+      tar xvf data.tar.xz
+
+      mv /tmp/usr/bin/rethinkdb /mnt/server
+
+      echo "-----------------------------------------"
+      echo "Installation completed..."
+      echo "-----------------------------------------"
+    container: 'ghcr.io/pelican-eggs/installers:debian'
+    entrypoint: bash
+variables:
+  -
+    sort: 2
+    name: 'Driver port'
+    description: ''
+    env_variable: DRIVER_PORT
+    default_value: 25568
+    user_viewable: true
+    user_editable: false
+    rules:
+      - required
+      - string
+      - 'max:10'
+  -
+    sort: 3
+    name: 'Http port'
+    description: ''
+    env_variable: HTTP_PORT
+    default_value: 25569
+    user_viewable: true
+    user_editable: false
+    rules:
+      - required
+      - string
+      - 'max:10'
+  -
+    sort: 1
+    name: Version
+    description: ''
+    env_variable: VERSION
+    default_value: 2.4.4
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - string
+      - 'max:20'
