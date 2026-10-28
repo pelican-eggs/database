@@ -1,0 +1,88 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
+    "meta": {
+        "version": "PLCN_v1",
+        "update_url": null
+    },
+    "exported_at": "2026-10-28T18:00:00+00:00",
+    "name": "Dragonfly Dev",
+    "author": "TH3N3WN00B@users.noreply.github.com",
+    "uuid": "a32afd93-c251-4c12-84f9-24f999342708",
+    "description": "Experimental: the daily development build of Dragonfly, built from its main branch. Dragonfly is an in-memory data store fully compatible with Redis and Memcached APIs. Use the Dragonfly egg for anything you depend on.",
+    "features": null,
+    "docker_images": {
+        "ghcr.io\/parkervcp\/yolks:redis_8": "ghcr.io\/parkervcp\/yolks:redis_8"
+    },
+    "file_denylist": [],
+    "startup": "exec .\/dragonfly --logtostderr --version_check=false --bind 0.0.0.0 --port {{SERVER_PORT}} --requirepass '{{SERVER_PASSWORD}}' --dir \/home\/container --dbfilename dump --snapshot_cron \"$SNAPSHOT_CRON\" --maxmemory {{SERVER_MEMORY}}mb --proactor_threads {{DF_THREADS}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"listening on\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n# Dragonfly Development Build Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\n# Import data from a Redis server: Dragonfly loads dump.rdb on start while it has no snapshot of its own.\r\nif [ -f dump.rdb ] && [ ! -f dump-summary.dfs ]; then\r\n    SRC_VER=$(head -c 128 dump.rdb | tr -c ' -~' ' ' | sed -n 's\/.*redis-ver *\\([0-9][0-9.]*\\).*\/\\1\/p')\r\n    SRC_VER=${SRC_VER:-unknown}\r\n    if ! ls -d backups\/*-redis-\"${SRC_VER}\" >\/dev\/null 2>&1; then\r\n        BACKUP=\"backups\/$(date +%Y%m%d-%H%M%S)-redis-${SRC_VER}\"\r\n        mkdir -p \"${BACKUP}\"\r\n        cp -p dump.rdb \"${BACKUP}\/\"\r\n        echo -e \"Backed up the data written by Redis ${SRC_VER} to ${BACKUP}. Dragonfly imports it on the next start.\"\r\n    fi\r\nfi\r\n\r\n# The development builds are only published as container images, so the binary is taken from the image layers.\r\nARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"amd64\" || echo \"arm64\")\r\nREPO=\"dragonflydb\/dragonfly-dev\"\r\nREGISTRY=\"https:\/\/ghcr.io\/v2\/${REPO}\"\r\nTAG=\"${DF_DEV_TAG:-ubuntu}\"\r\n\r\necho -e \"Looking up ghcr.io\/${REPO}:${TAG} (linux\/${ARCH})\"\r\nTOKEN=$(curl -fsSL \"https:\/\/ghcr.io\/token?scope=repository:${REPO}:pull\" | jq -r '.token \/\/ empty')\r\nMANIFEST=$(curl -fsSL -H \"Authorization: Bearer ${TOKEN}\" \\\r\n    -H \"Accept: application\/vnd.oci.image.index.v1+json, application\/vnd.oci.image.manifest.v1+json, application\/vnd.docker.distribution.manifest.list.v2+json, application\/vnd.docker.distribution.manifest.v2+json\" \\\r\n    \"${REGISTRY}\/manifests\/${TAG}\")\r\nDIGEST=$(jq -r --arg arch \"${ARCH}\" '.manifests[]? | select(.platform.os == \"linux\" and .platform.architecture == $arch) | .digest' <<< \"${MANIFEST}\")\r\nif [ -n \"${DIGEST}\" ]; then\r\n    MANIFEST=$(curl -fsSL -H \"Authorization: Bearer ${TOKEN}\" \\\r\n        -H \"Accept: application\/vnd.oci.image.manifest.v1+json, application\/vnd.docker.distribution.manifest.v2+json\" \\\r\n        \"${REGISTRY}\/manifests\/${DIGEST}\")\r\nfi\r\nLAYERS=$(jq -r '.layers | reverse | .[].digest' <<< \"${MANIFEST}\" 2>\/dev\/null)\r\nif [ -z \"${LAYERS}\" ]; then\r\n    echo -e \"Could not find the linux\/${ARCH} image of ghcr.io\/${REPO}:${TAG}\"\r\n    exit 1\r\nfi\r\nREVISION=$(curl -fsSL -H \"Authorization: Bearer ${TOKEN}\" \"${REGISTRY}\/blobs\/$(jq -r '.config.digest' <<< \"${MANIFEST}\")\" 2>\/dev\/null | jq -r '.config.Labels[\"org.opencontainers.image.revision\"] \/\/ empty' 2>\/dev\/null)\r\n\r\n# The binary is copied into the image last, so start with the last layer. Layers are streamed straight\r\n# into tar on the server disk, because \/tmp in the install container is a small tmpfs.\r\nWORK_DIR=\/mnt\/server\/.dragonfly-dev-install\r\nrm -rf \"${WORK_DIR}\"\r\nmkdir -p \"${WORK_DIR}\"\r\nfor LAYER in ${LAYERS}; do\r\n    echo -e \"Downloading layer ${LAYER}\"\r\n    curl -fsSL -H \"Authorization: Bearer ${TOKEN}\" \"${REGISTRY}\/blobs\/${LAYER}\" | tar -xzf - -C \"${WORK_DIR}\" usr\/local\/bin\/dragonfly 2>\/dev\/null\r\n    if [ \"${PIPESTATUS[0]}\" -ne 0 ]; then\r\n        rm -rf \"${WORK_DIR}\"\r\n        echo -e \"Failed to download ${LAYER}\"\r\n        exit 1\r\n    fi\r\n    if [ -f \"${WORK_DIR}\/usr\/local\/bin\/dragonfly\" ]; then\r\n        break\r\n    fi\r\ndone\r\n\r\nif [ ! -f \"${WORK_DIR}\/usr\/local\/bin\/dragonfly\" ]; then\r\n    rm -rf \"${WORK_DIR}\"\r\n    echo -e \"The image ghcr.io\/${REPO}:${TAG} does not contain \/usr\/local\/bin\/dragonfly\"\r\n    exit 1\r\nfi\r\n\r\nmv -f \"${WORK_DIR}\/usr\/local\/bin\/dragonfly\" dragonfly\r\nchmod +x dragonfly\r\nrm -rf \"${WORK_DIR}\"\r\n\r\n# The development binary keeps its debug symbols. Strip them to save disk space; the binary works either way.\r\nSIZE_BEFORE=$(du -m dragonfly | cut -f1)\r\nif ! command -v strip >\/dev\/null 2>&1; then\r\n    apt-get update -qq >\/dev\/null 2>&1 && apt-get install -y -qq --no-install-recommends binutils >\/dev\/null 2>&1\r\nfi\r\nif command -v strip >\/dev\/null 2>&1 && strip --strip-debug dragonfly; then\r\n    echo -e \"Removed the debug symbols from the binary (${SIZE_BEFORE} MB -> $(du -m dragonfly | cut -f1) MB).\"\r\nelse\r\n    echo -e \"Could not remove the debug symbols, keeping the full binary (${SIZE_BEFORE} MB).\"\r\nfi\r\n\r\necho -e \"Install complete. Dragonfly development build ${TAG} ${REVISION:+(commit ${REVISION:0:7}) }installed for ${ARCH}.\"\r\n",
+            "container": "ghcr.io\/parkervcp\/installers:debian",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Dragonfly Password",
+            "description": "The password Dragonfly should use to secure the server.",
+            "env_variable": "SERVER_PASSWORD",
+            "default_value": "P@55w0rd",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": null
+        },
+        {
+            "name": "Development Build",
+            "description": "The dragonfly-dev image tag to install: ubuntu for the newest daily build, or ubuntu-<commit> (for example ubuntu-f7fe6c4) to pin one build. Reinstall the server to update or apply a change.",
+            "env_variable": "DF_DEV_TAG",
+            "default_value": "ubuntu",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string",
+                "regex:\/^ubuntu(-[0-9a-f]{7})?$\/"
+            ],
+            "sort": null
+        },
+        {
+            "name": "Threads",
+            "description": "Number of Dragonfly threads. Each thread needs at least 256 MB of memory. 0 uses every CPU core of the host.",
+            "env_variable": "DF_THREADS",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "integer",
+                "min:0"
+            ],
+            "sort": null
+        },
+        {
+            "name": "Snapshot Schedule",
+            "description": "Cron expression for periodic snapshots to disk, for example *\/5 * * * * for every 5 minutes. Leave empty to only save on shutdown.",
+            "env_variable": "SNAPSHOT_CRON",
+            "default_value": "*\/5 * * * *",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "nullable",
+                "string",
+                "max:64"
+            ],
+            "sort": null
+        }
+    ]
+}
