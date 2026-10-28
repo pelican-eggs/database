@@ -1,0 +1,88 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
+    "meta": {
+        "version": "PLCN_v1",
+        "update_url": null
+    },
+    "exported_at": "2026-10-28T15:00:00+00:00",
+    "name": "Dragonfly",
+    "author": "TH3N3WN00B@users.noreply.github.com",
+    "uuid": "1fee215d-0342-4a1a-80db-1855afa09943",
+    "description": "Dragonfly is an in-memory data store built for modern application workloads. It is fully compatible with Redis and Memcached APIs and requires no code changes to adopt.",
+    "features": null,
+    "docker_images": {
+        "ghcr.io\/parkervcp\/yolks:redis_8": "ghcr.io\/parkervcp\/yolks:redis_8"
+    },
+    "file_denylist": [],
+    "startup": "exec .\/dragonfly --logtostderr --version_check=false --bind 0.0.0.0 --port {{SERVER_PORT}} --requirepass '{{SERVER_PASSWORD}}' --dir \/home\/container --dbfilename dump --snapshot_cron \"$SNAPSHOT_CRON\" --maxmemory {{SERVER_MEMORY}}mb --proactor_threads {{DF_THREADS}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"listening on\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n# Dragonfly Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\n# Import data from a Redis server: Dragonfly loads dump.rdb on start while it has no snapshot of its own.\r\nif [ -f dump.rdb ] && [ ! -f dump-summary.dfs ]; then\r\n    SRC_VER=$(head -c 128 dump.rdb | tr -c ' -~' ' ' | sed -n 's\/.*redis-ver *\\([0-9][0-9.]*\\).*\/\\1\/p')\r\n    SRC_VER=${SRC_VER:-unknown}\r\n    if ! ls -d backups\/*-redis-\"${SRC_VER}\" >\/dev\/null 2>&1; then\r\n        BACKUP=\"backups\/$(date +%Y%m%d-%H%M%S)-redis-${SRC_VER}\"\r\n        mkdir -p \"${BACKUP}\"\r\n        cp -p dump.rdb \"${BACKUP}\/\"\r\n        echo -e \"Backed up the data written by Redis ${SRC_VER} to ${BACKUP}. Dragonfly imports it on the next start.\"\r\n    fi\r\nfi\r\n\r\nARCH=$([[ \"$(uname -m)\" == \"x86_64\" ]] && echo \"x86_64\" || echo \"aarch64\")\r\n\r\nif [ -z \"${DF_VERSION}\" ] || [ \"${DF_VERSION}\" == \"latest\" ]; then\r\n    DOWNLOAD_URL=\"https:\/\/github.com\/dragonflydb\/dragonfly\/releases\/latest\/download\/dragonfly-${ARCH}.tar.gz\"\r\nelse\r\n    DOWNLOAD_URL=\"https:\/\/github.com\/dragonflydb\/dragonfly\/releases\/download\/v${DF_VERSION#v}\/dragonfly-${ARCH}.tar.gz\"\r\nfi\r\n\r\necho -e \"Downloading ${DOWNLOAD_URL}\"\r\nif ! curl -fsSL \"${DOWNLOAD_URL}\" -o dragonfly.tar.gz; then\r\n    rm -f dragonfly.tar.gz\r\n    echo -e \"Failed to download Dragonfly ${DF_VERSION}\"\r\n    exit 1\r\nfi\r\n\r\ntar -xzf dragonfly.tar.gz \"dragonfly-${ARCH}\"\r\nmv -f \"dragonfly-${ARCH}\" dragonfly\r\nchmod +x dragonfly\r\nrm -f dragonfly.tar.gz\r\n\r\necho -e \"Install complete. Dragonfly ${DF_VERSION} (${ARCH}) installed.\"",
+            "container": "ghcr.io\/parkervcp\/installers:debian",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Dragonfly Password",
+            "description": "The password Dragonfly should use to secure the server.",
+            "env_variable": "SERVER_PASSWORD",
+            "default_value": "P@55w0rd",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": null
+        },
+        {
+            "name": "Dragonfly Version",
+            "description": "The Dragonfly release to install, for example 2.0.2, or latest for the newest release. Reinstall the server to apply a change.",
+            "env_variable": "DF_VERSION",
+            "default_value": "2.0.2",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string",
+                "max:20"
+            ],
+            "sort": null
+        },
+        {
+            "name": "Threads",
+            "description": "Number of Dragonfly threads. Each thread needs at least 256 MB of memory. 0 uses every CPU core of the host.",
+            "env_variable": "DF_THREADS",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "integer",
+                "min:0"
+            ],
+            "sort": null
+        },
+        {
+            "name": "Snapshot Schedule",
+            "description": "Cron expression for periodic snapshots to disk, for example *\/5 * * * * for every 5 minutes. Leave empty to only save on shutdown.",
+            "env_variable": "SNAPSHOT_CRON",
+            "default_value": "*\/5 * * * *",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "nullable",
+                "string",
+                "max:64"
+            ],
+            "sort": null
+        }
+    ]
+}

@@ -1,0 +1,46 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
+    "meta": {
+        "version": "PLCN_v1",
+        "update_url": null
+    },
+    "exported_at": "2026-10-28T15:00:00+00:00",
+    "name": "Redis-8",
+    "author": "TH3N3WN00B@users.noreply.github.com",
+    "uuid": "de9a8b3e-0309-47f6-88d6-f96335c34724",
+    "description": "Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache and message broker. It supports data structures such as strings, hashes, lists, sets, sorted sets with range queries, bitmaps, hyperloglogs, geospatial indexes with radius queries and streams.",
+    "features": null,
+    "docker_images": {
+        "ghcr.io\/parkervcp\/yolks:redis_8": "ghcr.io\/parkervcp\/yolks:redis_8"
+    },
+    "file_denylist": [],
+    "startup": "exec \/usr\/local\/bin\/redis-server \/home\/container\/redis.conf --save 60 1 --dir \/home\/container\/ --bind 0.0.0.0 --port {{SERVER_PORT}} --requirepass '{{SERVER_PASSWORD}}' --maxmemory {{SERVER_MEMORY}}mb --daemonize no --logfile ''",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Ready to accept connections\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\n# Redis Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\nif [ ! -d \/mnt\/server ]; then\r\n    mkdir \/mnt\/server\/\r\nfi\r\n\r\ncd \/mnt\/server\/\r\n\r\n# Keep one copy of the data per Redis version that wrote it: a newer Redis loads older data, but not the other way round.\r\nif [ -f dump.rdb ] || [ -d appendonlydir ]; then\r\n    SRC_VER=\"\"\r\n    [ -f dump.rdb ] && SRC_VER=$(head -c 128 dump.rdb | tr -c ' -~' ' ' | sed -n 's\/.*redis-ver *\\([0-9][0-9.]*\\).*\/\\1\/p')\r\n    SRC_VER=${SRC_VER:-unknown}\r\n    if ! ls -d backups\/*-redis-\"${SRC_VER}\" >\/dev\/null 2>&1; then\r\n        BACKUP=\"backups\/$(date +%Y%m%d-%H%M%S)-redis-${SRC_VER}\"\r\n        mkdir -p \"${BACKUP}\"\r\n        [ -f dump.rdb ] && cp -p dump.rdb \"${BACKUP}\/\"\r\n        [ -d appendonlydir ] && cp -rp appendonlydir \"${BACKUP}\/\"\r\n        echo -e \"Backed up the data written by Redis ${SRC_VER} to ${BACKUP}. Redis 8 loads it on the next start.\"\r\n    fi\r\nfi\r\n\r\nif [ ! -f \/mnt\/server\/redis.conf ]; then\r\n    if ! curl -fsSL https:\/\/raw.githubusercontent.com\/pelican-eggs\/database\/main\/redis\/redis-8\/redis.conf -o redis.conf; then\r\n        rm -f redis.conf\r\n        echo -e \"Failed to download redis.conf\"\r\n        exit 1\r\n    fi\r\nfi\r\n\r\necho -e \"Install complete.\"",
+            "container": "ghcr.io\/parkervcp\/installers:alpine",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Redis Password",
+            "description": "The password redis should use to secure the server.",
+            "env_variable": "SERVER_PASSWORD",
+            "default_value": "P@55w0rd",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": null
+        }
+    ]
+}

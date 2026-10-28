@@ -6,7 +6,11 @@ Redis is an open source (BSD licensed), in-memory data structure store, used as 
 
 ## Server Startup
 
-You must first authenticate before trying to execute commands, to do this run `AUTH <YOUR_PASSWORD_HERE>` (without the `<>`). This should be the same as the password set in the `SERVER_PASSWORD` variable.
+Redis runs in the foreground and its log is shown in the console. The server is marked as started once Redis logs `Ready to accept connections`.
+
+The console does not accept Redis commands. Connect with any Redis client (for example `redis-cli -h <ip> -p <port> -a <password>`) using the password set in the `SERVER_PASSWORD` variable.
+
+Stopping the server sends `SIGINT` to Redis, which saves a final snapshot (`dump.rdb`) before it exits.
 
 ## Minimum RAM warning
 
